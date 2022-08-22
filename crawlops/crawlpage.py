@@ -5,7 +5,7 @@ import requests
 import dateutil.parser as dp
   
 # Solana StackExchange URL
-URL = "https://solana.stackexchange.com/questions/2306/are-wallet-addresses-created-or-are-they-discovered"
+URL = "https://solana.stackexchange.com/questions/1554/keypair-pubkey-mismatch-when-partial-signing-python"
 
 # Headers
 HEADERS = ({'User-Agent':
@@ -30,6 +30,16 @@ print("Question Upvotes -",int(questionUpvoteCount))
 # Extracting Number of answers to question
 numAnswers = int(dom.xpath('//*[@id="answers-header"]/div/div[1]/h2/span')[0].text.strip())
 print("Number Of Answers -", numAnswers)
+
+# If the answer is accepted - Only fetch the accepted answer's upvotes and author
+if(len(dom.xpath('//*[@itemprop="acceptedAnswer"]'))>0):
+    print("Up votes on answer -",dom.xpath('//*[@itemprop="acceptedAnswer"]//*[@itemprop="upvoteCount"]')[0].text.strip())
+    print("Author of answer - ",dom.xpath('//*[@itemprop="acceptedAnswer"]//*[@itemprop="author"]/a')[0].text.strip())
+# If no answer is accepted - Fetch all the upvotes with their authors
+else:
+    for x in range(numAnswers):
+        print("Up votes on answer -",dom.xpath('(//*[@itemprop="upvoteCount"])['+str(x+2)+']')[0].text.strip())
+        print("Author of answer - ",dom.xpath('(//*[@itemprop="author"]/a)['+str(x+2)+']')[0].text.strip())
 
 # Extracting Date Created
 qelem = soup.find(attrs={"itemprop" : "dateCreated"})

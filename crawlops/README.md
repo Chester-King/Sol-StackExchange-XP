@@ -5,3 +5,4 @@ To achieve the macro vision of Solana StackExchange XP System this POC is import
 The **crawlops** gives insight on how can we read question data from Solana StackExchange webpage by using BeautifulSoup.
 
 * The `crawlpage.py` has a script which crawls the given URL solana stackExchange page and prints `Question Title`, `Question Upvotes`, `Number Of Answers`, `UNIX timestamp of when the question was created`
+* The script also fetches the accepted answer and its author. In case no answer is accepted it returns the upvotes and authors of all the answers
