@@ -36,6 +36,7 @@ def crawl(URL):
         resp["Accepted"] = True
         resp["Upvotes"] = int(dom.xpath('//*[@itemprop="acceptedAnswer"]//*[@itemprop="upvoteCount"]')[0].text.strip())
         resp["Author"] = dom.xpath('//*[@itemprop="acceptedAnswer"]//*[@itemprop="author"]/a')[0].text.strip()
+        resp["Reason"] = "Accepted Answer"
     else:
         resp["Accepted"] = False
         if(resp["NumberOfAnswers"]>0):
@@ -48,12 +49,15 @@ def crawl(URL):
             if(muser==None):
                 resp["Upvotes"] = None
                 resp["Author"] = None
+                resp["Reason"] = "Answer with 0 upvotes"
             else:
                 resp["Upvotes"] = mint
                 resp["Author"] = muser
+                resp["Reason"] = "Upvotes but no accepted answer"
         else:
             resp["Upvotes"] = None
             resp["Author"] = None
+            resp["Reason"] = "No one has answered this question"
     return(resp)
 
 
@@ -70,10 +74,19 @@ for x in data_tab:
     # print(x['fields']['QuestionURL'])
     # print(x['fields']['username'])
     # print(x['fields']['discord'])
+    if(x['fields'].get('Done')==True):
+        continue
     crawldata = crawl(x['fields']['QuestionURL'])
+    fields = {}
     if(crawldata["NumberOfAnswers"]==0):
         print("No answers")
     elif(x['fields']['username']==crawldata["Author"]):
         print("Correct Author - Grant XP")
+        fields['Legit'] = True
     else:
         print("Illegal")
+        crawldata["Reason"] = "Wrong Username"
+    fields['Done'] = True
+    fields['Reason'] = crawldata["Reason"]
+    print(x["id"])
+    at.update(TABLE_ID,x["id"],fields)
