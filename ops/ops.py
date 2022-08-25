@@ -37,6 +37,7 @@ def crawl(URL):
         resp["Upvotes"] = int(dom.xpath('//*[@itemprop="acceptedAnswer"]//*[@itemprop="upvoteCount"]')[0].text.strip())
         resp["Author"] = dom.xpath('//*[@itemprop="acceptedAnswer"]//*[@itemprop="author"]/a')[0].text.strip()
         resp["Reason"] = "Accepted Answer"
+        resp["XP"] = "+10"
     else:
         resp["Accepted"] = False
         if(resp["NumberOfAnswers"]>0):
@@ -50,14 +51,17 @@ def crawl(URL):
                 resp["Upvotes"] = None
                 resp["Author"] = None
                 resp["Reason"] = "Answer with 0 upvotes"
+                resp["XP"] = "0"
             else:
                 resp["Upvotes"] = mint
                 resp["Author"] = muser
                 resp["Reason"] = "Upvotes but no accepted answer"
+                resp["XP"] = "+5"
         else:
             resp["Upvotes"] = None
             resp["Author"] = None
             resp["Reason"] = "No one has answered this question"
+            resp["XP"] = "0"
     return(resp)
 
 
@@ -86,7 +90,9 @@ for x in data_tab:
     else:
         print("Illegal")
         crawldata["Reason"] = "Wrong Username"
+        crawldata["XP"] = "0"
     fields['Done'] = True
     fields['Reason'] = crawldata["Reason"]
+    fields['XP'] = crawldata["XP"]
     print(x["id"])
     at.update(TABLE_ID,x["id"],fields)
